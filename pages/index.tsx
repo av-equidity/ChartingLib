@@ -28,19 +28,12 @@ const TVChartContainer = dynamic(
 );
 
 export default function Home() {
-  const [isScriptReady, setIsScriptReady] = useState(false);
+  const [isScriptReady, setIsScriptReady] = useState(true);
   return (
     <>
       <Head>
         <title>TradingView Charting Library</title>
       </Head>
-      <Script
-        src="/static/datafeeds/udf/dist/bundle.js"
-        strategy="lazyOnload"
-        onReady={() => {
-          setIsScriptReady(true);
-        }}
-      />
       {isScriptReady && <TVChartContainer {...defaultWidgetProps} />}
     </>
   );
