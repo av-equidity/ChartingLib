@@ -8,7 +8,7 @@ import {
 
 const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
   symbol: "XAUUSD",
-  interval: "1" as ResolutionString,
+  interval: "5" as ResolutionString,
   library_path: "/static/charting_library/",
   locale: "en",
   charts_storage_url: "https://saveload.tradingview.com",
