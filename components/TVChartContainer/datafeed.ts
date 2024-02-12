@@ -2,6 +2,8 @@ import { chartHistory } from "@/types/chartHistory";
 import { symbols } from "@/types/symbols";
 import { subscribeOnStream, unsubscribeFromStream } from "./streaming";
 
+let savedSymbols: symbols[] = [];
+let toTimeStamp: number = 0;
 
 const configurationData = {
     // Represents the resolutions for bars supported by your datafeed
@@ -14,9 +16,15 @@ const configurationData = {
 };
 let flag:boolean = false;
 async function getAllSymbols() {
+    if(savedSymbols.length > 0){
+        console.log("Already got the symbols");
+        return savedSymbols;
+    }else{
     const response = await fetch('api/symbolsData');
     const data: symbols[] = await response.json();
+    savedSymbols = data;
     return data;
+    }
 }
 async function getChartHistory(path:string) {
     const response = await fetch(`api/chartHistoryData?${path}`);
@@ -87,6 +95,7 @@ export default {
         setTimeout('100000',10000);
         console.log('[getBars]: Method call', symbolInfo);
         const { from, to, firstDataRequest } = periodParams;
+        toTimeStamp = to;
         const urlParameters = {
             symbol: symbolInfo.name,
             fromTs: from,
@@ -127,7 +136,7 @@ export default {
             onRealtimeCallback,
             subscriberUID,
             onResetCacheNeededCallback,
-            lastBarsCache.get(`${symbolInfo.exchange}:${symbolInfo.name}`)
+            toTimeStamp)
         );
     },
 
