@@ -19,22 +19,22 @@ socket.on('error', (error:any) => {
 });
 
 socket.on('message', (data: any) => {
-    console.log('[socket] Message:', data);
+    //console.log('[socket] Message:', data);
 
     const tradePrice = parseFloat(data.bid);
-    const tradeTime = parseInt(data.time);
+    const tradePrice2 = parseFloat(data.ask);
+    let tradeTime = parseInt(data.time);
+    tradeTime= data.time;
     const channelString = data.symbol;
     const subscriptionItem = channelToSubscription.get(channelString);
     if (subscriptionItem === undefined) {
         return;
     }
-    const lastDailyBar = subscriptionItem.lastDailyBar;
-    const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time);
 
     let bar: { time: number; open: number; high: number; low: number; close: number; };
-    if (tradeTime >= nextDailyBarTime) {
+    if (tradeTime >= 0) {
         bar = {
-            time: nextDailyBarTime,
+            time: tradeTime,
             open: tradePrice,
             high: tradePrice,
             low: tradePrice,
@@ -43,9 +43,10 @@ socket.on('message', (data: any) => {
         console.log('[socket] Generate new bar', bar);
     } else {
         bar = {
-            ...lastDailyBar,
-            high: Math.max(lastDailyBar.high, tradePrice),
-            low: Math.min(lastDailyBar.low, tradePrice),
+            time: tradeTime,
+            open: tradePrice,
+            high: Math.max(tradePrice2, tradePrice),
+            low: Math.min(tradePrice2, tradePrice),
             close: tradePrice,
         };
         console.log('[socket] Update the latest bar by price', tradePrice);
@@ -71,8 +72,8 @@ export function subscribeOnStream(
     resolution: any,
     onRealtimeCallback: any,
     subscriberUID: any,
-    onResetCacheNeededCallback: any,
-    lastDailyBar: any
+    lastDailyBar: any,
+    toTimeStamp: any,  
 )
 {
     const parsedSymbol = symbolInfo.name;
@@ -90,7 +91,7 @@ export function subscribeOnStream(
     subscriptionItem = {
         subscriberUID,
         resolution,
-        lastDailyBar,
+        toTimeStamp,
         handlers: [handler],
     };
     channelToSubscription.set(channelString, subscriptionItem);
