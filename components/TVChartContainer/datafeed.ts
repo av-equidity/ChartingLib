@@ -137,7 +137,6 @@ export default {
             subscriberUID,
             onResetCacheNeededCallback,
             toTimeStamp)
-        );
     },
 
     unsubscribeBars: (subscriberUID:any) => {
