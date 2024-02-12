@@ -31,6 +31,9 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
                 const total = await data.total;
                 console.log('Here is the total count ' + total);
                 const serverData: chartHistory[] = data.data;
+              serverData.forEach(data => {
+                  data.time = data.time*1000; // convert seconds to miliseconds
+                });
                 console.log("Here is the data "+serverData)
                 res.status(200).json(response.data);
               } catch (error) {
